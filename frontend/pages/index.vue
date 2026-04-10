@@ -83,9 +83,6 @@
     <footer class="border-t border-gray-100 py-10">
       <div class="max-w-5xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4">
         <span class="text-sm text-gray-400">© 2026 Jeremy.dev</span>
-        <div class="flex gap-6 text-sm text-gray-400">
-          <a href="https://github.com/poohc300/blog" class="hover:text-black transition-colors">GitHub</a>
-        </div>
       </div>
     </footer>
 

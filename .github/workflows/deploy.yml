@@ -1,0 +1,44 @@
+name: Build & Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build Frontend
+        working-directory: frontend
+        run: |
+          npm ci
+          npm run build
+
+      - name: Deploy Frontend
+        run: |
+          rm -rf /home/jeremy/dev/blog/frontend/.output
+          cp -r frontend/.output /home/jeremy/dev/blog/frontend/.output
+          sudo systemctl restart blog-frontend
+          sleep 5
+          sudo systemctl is-active --quiet blog-frontend && echo "Frontend started successfully" || (echo "Frontend failed to start" && exit 1)
+
+      - name: Build Backend
+        working-directory: backend
+        run: |
+          chmod +x gradlew
+          ./gradlew bootJar -x test
+
+      - name: Deploy Backend
+        run: |
+          cp backend/build/libs/*.jar /home/jeremy/dev/blog/backend/app.jar
+          sudo systemctl restart blog-backend
+          sleep 5
+          sudo systemctl is-active --quiet blog-backend && echo "Backend started successfully" || (echo "Backend failed to start" && exit 1)
+
+      - name: Reload Nginx
+        run: docker exec nginx nginx -s reload

@@ -7,12 +7,19 @@ export default defineNuxtConfig({
   modules: [
     '@vueuse/nuxt'
   ],
+  css: ['~/assets/css/main.css'],
+  postcss: {
+    plugins: {
+      tailwindcss: {},
+      autoprefixer: {},
+    },
+  },
+
   runtimeConfig: {
     apiBaseUrl: process.env.API_BASE_URL || 'http://localhost:8080',
     public: {
       apiBaseUrl: process.env.NUXT_PUBLIC_API_BASE_URL || 'http://localhost:8080'
     }
   },
-  css: [],
   compatibilityDate: '2024-11-01'
 })

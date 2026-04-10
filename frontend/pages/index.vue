@@ -1,31 +1,6 @@
 <template>
   <div class="w-full max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-10 xl:px-16 py-8 sm:py-12">
 
-    <!-- Featured Post -->
-    <section class="border-b border-gray-200 pb-10 sm:pb-14 mb-10 sm:mb-14">
-      <div class="flex flex-col sm:flex-row gap-6 sm:gap-10 items-start">
-        <div class="flex-1">
-          <span class="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-3 block">Featured</span>
-          <h1 class="text-2xl sm:text-3xl xl:text-4xl font-bold text-black leading-tight mb-3 sm:mb-4">
-            SSH 터널링으로 원격 서버에서 OAuth 인증하기
-          </h1>
-          <p class="text-gray-500 text-base sm:text-lg leading-relaxed mb-5 sm:mb-6">
-            집 밖에서 라즈베리파이 서버에 접속 중일 때, rclone Google Drive 인증처럼 브라우저가 필요한 작업을 SSH 터널을 이용해 해결하는 방법을 공유합니다.
-          </p>
-          <div class="flex items-center gap-3">
-            <div class="w-8 h-8 rounded-full bg-black flex items-center justify-center text-white text-xs font-bold">J</div>
-            <div>
-              <span class="text-sm font-medium text-black">Jeremy</span>
-              <span class="text-gray-400 text-sm"> · 2026년 4월 10일 · 5분 읽기</span>
-            </div>
-          </div>
-        </div>
-        <div class="w-full sm:w-52 lg:w-64 xl:w-72 h-40 sm:h-44 bg-gray-100 rounded flex items-center justify-center shrink-0">
-          <span class="text-gray-300 text-sm">썸네일</span>
-        </div>
-      </div>
-    </section>
-
     <!-- Tag Filter -->
     <div class="flex gap-2 mb-8 sm:mb-10 overflow-x-auto pb-1">
       <button class="px-4 py-1.5 rounded-full bg-black text-white text-sm whitespace-nowrap">전체</button>
@@ -42,6 +17,7 @@
       <article
         v-for="post in posts" :key="post.id"
         class="py-6 sm:py-8 flex gap-4 sm:gap-8 items-start group cursor-pointer"
+        @click="$router.push(`/posts/${post.id}`)"
       >
         <div class="flex-1">
           <div class="flex items-center gap-2 mb-3">

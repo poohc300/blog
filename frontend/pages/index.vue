@@ -27,7 +27,7 @@
     </section>
 
     <!-- Tag Filter -->
-    <div class="flex gap-2 mb-8 sm:mb-10 overflow-x-auto pb-1 scrollbar-hide">
+    <div class="flex gap-2 mb-8 sm:mb-10 overflow-x-auto pb-1">
       <button class="px-4 py-1.5 rounded-full bg-black text-white text-sm whitespace-nowrap">전체</button>
       <button
         v-for="tag in tags" :key="tag"
@@ -37,30 +37,30 @@
       </button>
     </div>
 
-    <!-- Post Grid -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+    <!-- Post List -->
+    <div class="divide-y divide-gray-100">
       <article
         v-for="post in posts" :key="post.id"
-        class="group cursor-pointer flex flex-col"
+        class="py-6 sm:py-8 flex gap-4 sm:gap-8 items-start group cursor-pointer"
       >
-        <div class="w-full aspect-video bg-gray-100 rounded mb-4 flex items-center justify-center">
-          <span class="text-gray-300 text-sm">이미지</span>
-        </div>
-        <div class="flex-1 flex flex-col">
-          <div class="flex items-center gap-2 mb-2">
+        <div class="flex-1">
+          <div class="flex items-center gap-2 mb-3">
+            <div class="w-6 h-6 rounded-full bg-black flex items-center justify-center text-white text-xs font-bold">J</div>
+            <span class="text-sm text-gray-500">Jeremy · {{ post.date }}</span>
+          </div>
+          <h2 class="text-base sm:text-xl font-bold text-black mb-2 group-hover:underline leading-snug">
+            {{ post.title }}
+          </h2>
+          <p class="text-gray-500 text-sm leading-relaxed mb-4 line-clamp-2 hidden sm:block">
+            {{ post.summary }}
+          </p>
+          <div class="flex items-center gap-3">
             <span class="text-xs px-2.5 py-1 bg-gray-100 text-gray-600 rounded-full">{{ post.tag }}</span>
             <span class="text-xs text-gray-400">{{ post.readTime }}분 읽기</span>
           </div>
-          <h2 class="text-base sm:text-lg font-bold text-black mb-2 group-hover:underline leading-snug">
-            {{ post.title }}
-          </h2>
-          <p class="text-gray-500 text-sm leading-relaxed mb-4 line-clamp-2 flex-1">
-            {{ post.summary }}
-          </p>
-          <div class="flex items-center gap-2">
-            <div class="w-6 h-6 rounded-full bg-black flex items-center justify-center text-white text-xs font-bold">J</div>
-            <span class="text-xs text-gray-400">Jeremy · {{ post.date }}</span>
-          </div>
+        </div>
+        <div class="w-20 h-14 sm:w-28 sm:h-20 bg-gray-100 rounded shrink-0 flex items-center justify-center">
+          <span class="text-gray-300 text-xs">이미지</span>
         </div>
       </article>
     </div>

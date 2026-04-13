@@ -81,7 +81,7 @@
 import { cloneDeep } from 'lodash-es'
 import { onClickOutside } from '@vueuse/core'
 
-definePageMeta({ layout: 'admin' })
+definePageMeta({ layout: 'admin', middleware: 'auth' })
 
 const ui = useUiStore()
 const base = useApiBase()

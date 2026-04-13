@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.blog.upload.mapper.AttachmentMapper">
+
+    <insert id="insert" parameterType="com.example.blog.upload.model.Attachment">
+        INSERT INTO attachment (original_name, stored_name, file_path, file_size, mime_type, uploaded_by)
+        VALUES (#{originalName}, #{storedName}, #{filePath}, #{fileSize}, #{mimeType}, #{uploadedBy})
+    </insert>
+
+</mapper>

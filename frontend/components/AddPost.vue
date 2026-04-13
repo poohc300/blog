@@ -57,12 +57,9 @@
         <!-- 내용 -->
         <div class="flex flex-col gap-1.5">
           <label class="text-sm font-medium text-gray-700">내용</label>
-          <textarea
-            v-model="form.body"
-            placeholder="내용을 입력하세요"
-            rows="8"
-            class="w-full border border-gray-200 rounded px-3 py-2 text-sm text-black placeholder-gray-400 outline-none focus:border-black transition-colors resize-none"
-          />
+          <ClientOnly>
+            <TiptapEditor v-model="form.body" />
+          </ClientOnly>
         </div>
 
       </div>

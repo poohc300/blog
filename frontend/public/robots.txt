@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+
+# 어드민 페이지는 크롤링 제외
+Disallow: /admin
+
+Sitemap: https://blog.nexacromancer.win/sitemap.xml

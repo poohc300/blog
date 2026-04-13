@@ -36,6 +36,16 @@ import { formatDate, calcReadTime } from '~/utils/post'
 
 const base = useApiBase()
 
+useSeoMeta({
+  title: 'Jeremy.dev — 개발 블로그',
+  description: '개발하면서 만난 문제와 해결 과정을 기록합니다.',
+  ogTitle: 'Jeremy.dev',
+  ogDescription: '개발하면서 만난 문제와 해결 과정을 기록합니다.',
+  ogType: 'website',
+  ogUrl: 'https://blog.nexacromancer.win',
+  twitterCard: 'summary',
+})
+
 const { data: raw } = await useFetch<any[]>(`${base}/api/posts`)
 
 const posts = computed(() =>

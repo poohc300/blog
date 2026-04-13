@@ -46,10 +46,42 @@ const post = computed(() => {
     authorId: p.authorId,
     title: p.title,
     body: p.body ?? '',
+    summary: p.summary ?? '',
     date: formatDate(p.createdAt),
+    createdAt: p.createdAt,
     tag: p.tag,
     readTime: calcReadTime(p.body ?? ''),
   }
+})
+
+// ── SEO ────────────────────────────────────────────────────
+useSeoMeta({
+  title: () => post.value ? `${post.value.title} | Jeremy.dev` : 'Jeremy.dev',
+  description: () => post.value?.summary || '',
+  ogTitle: () => post.value?.title || '',
+  ogDescription: () => post.value?.summary || '',
+  ogType: 'article',
+  ogUrl: () => `https://blog.nexacromancer.win/posts/${id}`,
+  twitterCard: 'summary',
+})
+
+// JSON-LD 구조화 데이터 (Google 리치 결과용)
+useHead({
+  script: [
+    {
+      type: 'application/ld+json',
+      innerHTML: computed(() => post.value ? JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'BlogPosting',
+        headline: post.value.title,
+        description: post.value.summary,
+        datePublished: post.value.createdAt,
+        author: { '@type': 'Person', name: 'Jeremy' },
+        publisher: { '@type': 'Person', name: 'Jeremy' },
+        url: `https://blog.nexacromancer.win/posts/${id}`,
+      }) : ''),
+    },
+  ],
 })
 
 const relatedPosts = computed(() =>

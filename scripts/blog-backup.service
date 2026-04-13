@@ -1,0 +1,12 @@
+[Unit]
+Description=Blog Database & Uploads Backup
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=jeremy
+ExecStart=/home/jeremy/dev/blog/scripts/backup.sh
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=blog-backup

@@ -5,8 +5,8 @@
 <mapper namespace="com.example.blog.upload.mapper.AttachmentMapper">
 
     <insert id="insert" parameterType="com.example.blog.upload.model.Attachment">
-        INSERT INTO attachment (original_name, stored_name, file_path, file_size, mime_type, uploaded_by)
-        VALUES (#{originalName}, #{storedName}, #{filePath}, #{fileSize}, #{mimeType}, #{uploadedBy})
+        INSERT INTO attachment (content_id, original_name, stored_name, file_path, file_size, mime_type, uploaded_by)
+        VALUES (#{contentId}, #{originalName}, #{storedName}, #{filePath}, #{fileSize}, #{mimeType}, #{uploadedBy})
     </insert>
 
 </mapper>

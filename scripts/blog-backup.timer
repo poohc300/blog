@@ -1,0 +1,14 @@
+[Unit]
+Description=Blog Backup Timer (매일 새벽 2시)
+Requires=blog-backup.service
+
+[Timer]
+# 매일 02:00 실행
+OnCalendar=*-*-* 02:00:00
+# 부팅 후 놓친 실행이 있으면 즉시 한 번 실행
+Persistent=true
+# 최대 10분 무작위 지연 (서버 부하 분산용)
+RandomizedDelaySec=600
+
+[Install]
+WantedBy=timers.target

@@ -21,6 +21,7 @@
     <select id="findById" resultType="com.example.blog.post.model.Post">
         SELECT
             c.id,
+            c.author_id,
             c.title,
             c.body,
             c.created_at,

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.blog.post.mapper.PostMapper">
+
+    <select id="findAll" resultType="com.example.blog.post.model.Post">
+        <![CDATA[
+        SELECT
+            c.id,
+            c.title,
+            LEFT(regexp_replace(c.body, '<[^>]*>', '', 'g'), 200) AS summary,
+            c.created_at,
+            t.name AS tag
+        FROM content c
+        JOIN topic t ON c.topic_id = t.id
+        ORDER BY c.created_at DESC
+        ]]>
+    </select>
+
+    <select id="findById" resultType="com.example.blog.post.model.Post">
+        SELECT
+            c.id,
+            c.title,
+            c.body,
+            c.created_at,
+            t.name AS tag
+        FROM content c
+        JOIN topic t ON c.topic_id = t.id
+        WHERE c.id = #{id}
+    </select>
+
+</mapper>

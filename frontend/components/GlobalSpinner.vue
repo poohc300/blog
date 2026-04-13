@@ -10,7 +10,7 @@
 </template>
 
 <script setup lang="ts">
-import RingLoader from 'vue-spinner/src/RingLoader.vue'
+import { RingLoader } from 'vue-spinner'
 
 const ui = useUiStore()
 </script>

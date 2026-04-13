@@ -5,7 +5,8 @@ export default defineNuxtConfig({
     typeCheck: true
   },
   modules: [
-    '@vueuse/nuxt'
+    '@vueuse/nuxt',
+    '@pinia/nuxt',
   ],
   css: ['~/assets/css/main.css'],
   postcss: {

@@ -39,12 +39,7 @@
             @focus="showDropdown = true"
             @input="form.topicId = null"
           />
-          <!-- 선택 완료 표시 -->
-          <span
-            v-if="form.topicId"
-            class="absolute right-3 top-[2.35rem] text-xs text-gray-400"
-          >✓</span>
-          <!-- 드롭다운 -->
+          <span v-if="form.topicId" class="absolute right-3 top-[2.35rem] text-xs text-gray-400">✓</span>
           <ul
             v-if="showDropdown && filteredTopics.length"
             class="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded shadow-lg z-10 max-h-40 overflow-y-auto"
@@ -70,26 +65,21 @@
           />
         </div>
 
-        <!-- 로딩바 -->
-        <div v-if="loading" class="w-full h-1 bg-gray-100 rounded overflow-hidden">
-          <div class="h-full bg-black rounded animate-loading-bar" />
-        </div>
-
       </div>
 
       <!-- Footer -->
       <div class="px-6 py-4 border-t border-gray-200 flex justify-end gap-3">
         <button
-          :disabled="loading"
+          :disabled="ui.loading"
           class="px-4 py-2 text-sm text-gray-600 hover:text-black transition-colors disabled:opacity-40"
           @click="handleCancel"
         >
           취소
         </button>
         <button
-          :disabled="!isDirty || loading"
+          :disabled="!isDirty || ui.loading"
           class="px-4 py-2 text-sm rounded font-medium transition-colors"
-          :class="isDirty && !loading
+          :class="isDirty && !ui.loading
             ? 'bg-black text-white hover:bg-gray-800'
             : 'bg-gray-100 text-gray-400 cursor-not-allowed'"
           @click="handleConfirm"
@@ -106,7 +96,7 @@
 import { cloneDeep } from 'lodash-es'
 import { onClickOutside } from '@vueuse/core'
 
-const { $swal } = useNuxtApp()
+const ui = useUiStore()
 const base = useApiBase()
 
 const emit = defineEmits<{
@@ -149,22 +139,20 @@ function selectTopic(topic: { id: number; name: string }) {
 onClickOutside(tagWrapRef, () => { showDropdown.value = false })
 
 // ── 액션 ──────────────────────────────────────────────
-const loading = ref(false)
-
 function resetForm() {
   form.value = cloneDeep(initialForm)
   tagQuery.value = ''
 }
 
 function handleCancel() {
-  if (loading.value) return
+  if (ui.loading) return
   resetForm()
   emit('cancel')
 }
 
 async function handleConfirm() {
-  if (!isDirty.value || loading.value) return
-  loading.value = true
+  if (!isDirty.value || ui.loading) return
+  ui.showSpinner()
   try {
     await $fetch(`${base}/api/posts`, {
       method: 'POST',
@@ -172,41 +160,16 @@ async function handleConfirm() {
         topicId: form.value.topicId,
         title: form.value.title,
         body: form.value.body,
-        authorId: 1, // TODO: 로그인 유저 ID 연결
+        authorId: 1,
       },
     })
     resetForm()
     emit('done')
-    await $swal.fire({
-      icon: 'success',
-      title: '등록 완료',
-      text: '글이 성공적으로 등록되었습니다.',
-      confirmButtonColor: '#000',
-      confirmButtonText: '확인',
-      timer: 3000,
-      timerProgressBar: true,
-    })
+    await ui.alert({ icon: 'success', title: '등록 완료', text: '글이 성공적으로 등록되었습니다.', timer: 3000 })
   } catch {
-    await $swal.fire({
-      icon: 'error',
-      title: '오류',
-      text: '글 등록 중 오류가 발생했습니다.',
-      confirmButtonColor: '#000',
-      confirmButtonText: '확인',
-    })
+    await ui.alert({ icon: 'error', title: '오류', text: '글 등록 중 오류가 발생했습니다.' })
   } finally {
-    loading.value = false
+    ui.hideSpinner()
   }
 }
 </script>
-
-<style scoped>
-@keyframes loading-bar {
-  0%   { width: 0%; margin-left: 0; }
-  50%  { width: 60%; margin-left: 20%; }
-  100% { width: 0%; margin-left: 100%; }
-}
-.animate-loading-bar {
-  animation: loading-bar 1.2s ease-in-out infinite;
-}
-</style>

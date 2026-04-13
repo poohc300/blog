@@ -18,17 +18,11 @@
 
   <AddPost
     v-if="showAddPost"
-    @confirm="handleConfirm"
+    @done="showAddPost = false"
     @cancel="showAddPost = false"
   />
 </template>
 
 <script setup lang="ts">
 const showAddPost = ref(false)
-
-function handleConfirm(data: { title: string; tag: string; body: string }) {
-  showAddPost.value = false
-  // TODO: API 연결
-  console.log('submit:', data)
-}
 </script>

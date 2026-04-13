@@ -31,4 +31,14 @@
         WHERE c.id = #{id}
     </select>
 
+
+    <select id="findAllTopics" resultType="com.example.blog.post.model.Topic">
+        SELECT id, name FROM topic ORDER BY name
+    </select>
+
+    <insert id="insert" parameterType="com.example.blog.post.model.PostCreateRequest">
+        INSERT INTO content (topic_id, title, body, author_id)
+        VALUES (#{topicId}, #{title}, #{body}, #{authorId})
+    </insert>
+
 </mapper>

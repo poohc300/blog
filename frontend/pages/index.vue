@@ -23,9 +23,41 @@
     <!-- Post List -->
     <div class="divide-y divide-gray-100">
       <PostCard
-        v-for="post in filteredPosts" :key="post.id"
+        v-for="post in pagedPosts" :key="post.id"
         :post="post"
       />
+    </div>
+
+    <!-- Pagination -->
+    <div v-if="totalPages > 1" class="flex items-center justify-center gap-1 mt-12">
+      <button
+        :disabled="currentPage === 1"
+        class="px-3 py-1.5 text-sm rounded transition-colors disabled:opacity-30"
+        :class="currentPage === 1 ? 'text-gray-300' : 'text-gray-500 hover:text-black'"
+        @click="currentPage--"
+      >
+        ←
+      </button>
+
+      <button
+        v-for="page in pageNumbers" :key="page"
+        class="w-8 h-8 text-sm rounded transition-colors"
+        :class="page === currentPage
+          ? 'bg-black text-white font-medium'
+          : 'text-gray-500 hover:text-black'"
+        @click="currentPage = page"
+      >
+        {{ page }}
+      </button>
+
+      <button
+        :disabled="currentPage === totalPages"
+        class="px-3 py-1.5 text-sm rounded transition-colors disabled:opacity-30"
+        :class="currentPage === totalPages ? 'text-gray-300' : 'text-gray-500 hover:text-black'"
+        @click="currentPage++"
+      >
+        →
+      </button>
     </div>
 
   </div>
@@ -62,8 +94,30 @@ const posts = computed(() =>
 const tags = computed(() => [...new Set(posts.value.map(p => p.tag))])
 
 const selectedTag = ref<string | null>(null)
+const currentPage = ref(1)
+const PAGE_SIZE = 5
 
 const filteredPosts = computed(() =>
   selectedTag.value ? posts.value.filter(p => p.tag === selectedTag.value) : posts.value
 )
+
+// 태그 변경 시 1페이지로 리셋
+watch(selectedTag, () => { currentPage.value = 1 })
+
+const totalPages = computed(() => Math.ceil(filteredPosts.value.length / PAGE_SIZE))
+
+const pagedPosts = computed(() => {
+  const start = (currentPage.value - 1) * PAGE_SIZE
+  return filteredPosts.value.slice(start, start + PAGE_SIZE)
+})
+
+const pageNumbers = computed(() => {
+  const total = totalPages.value
+  const cur = currentPage.value
+  // 최대 5개 페이지 버튼 표시
+  let start = Math.max(1, cur - 2)
+  const end = Math.min(total, start + 4)
+  start = Math.max(1, end - 4)
+  return Array.from({ length: end - start + 1 }, (_, i) => start + i)
+})
 </script>

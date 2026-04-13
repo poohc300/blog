@@ -75,7 +75,10 @@ const editor = useEditor({
   ],
   content: props.modelValue,
   onUpdate: ({ editor }) => {
-    emit('update:modelValue', editor.getHTML())
+    // IME 조합 중(한글/일본어 등)에는 emit 금지 — 조합 완료 후 한 번만 전달
+    if (!editor.view.composing) {
+      emit('update:modelValue', editor.getHTML())
+    }
   },
 })
 

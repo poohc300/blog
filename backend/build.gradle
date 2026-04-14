@@ -42,3 +42,14 @@ dependencies {
 tasks.named('test') {
 	useJUnitPlatform()
 }
+
+// bootJar 빌드 완료 후 app.jar로 자동 복사
+bootJar {
+	doLast {
+		copy {
+			from bootJar.archiveFile
+			into projectDir
+			rename { 'app.jar' }
+		}
+	}
+}

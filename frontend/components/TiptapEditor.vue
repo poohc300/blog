@@ -60,8 +60,6 @@ import { common, createLowlight } from 'lowlight'
 const props = defineProps<{ modelValue: string }>()
 const emit = defineEmits<{ 'update:modelValue': [value: string] }>()
 
-const ui = useUiStore()
-const base = useApiBase()
 const imageInputRef = ref<HTMLInputElement | null>(null)
 const lowlight = createLowlight(common)
 
@@ -69,7 +67,7 @@ const editor = useEditor({
   extensions: [
     StarterKit.configure({ codeBlock: false }),
     CodeBlockLowlight.configure({ lowlight }),
-    Image.configure({ inline: false, allowBase64: false }),
+    Image.configure({ inline: false, allowBase64: true }),
     Link.configure({ openOnClick: false }),
     Placeholder.configure({ placeholder: '내용을 입력하세요...' }),
   ],
@@ -79,6 +77,30 @@ const editor = useEditor({
     if (!editor.view.composing) {
       emit('update:modelValue', editor.getHTML())
     }
+  },
+  editorProps: {
+    handleDrop(view, event) {
+      const files = event.dataTransfer?.files
+      if (!files || files.length === 0) return false
+      const imageFile = Array.from(files).find(f => f.type.startsWith('image/'))
+      if (!imageFile) return false
+      event.preventDefault()
+      insertAsBase64(imageFile)
+      return true
+    },
+    handlePaste(view, event) {
+      const items = event.clipboardData?.items
+      if (!items) return false
+      for (const item of Array.from(items)) {
+        if (item.type.startsWith('image/')) {
+          event.preventDefault()
+          const file = item.getAsFile()
+          if (file) insertAsBase64(file)
+          return true
+        }
+      }
+      return false
+    },
   },
 })
 
@@ -103,30 +125,25 @@ function setLink() {
   }
 }
 
-// ── 이미지 업로드 ──────────────────────────────────────
+// ── 이미지 삽입 (base64) ───────────────────────────────
 function triggerImageUpload() {
   imageInputRef.value?.click()
 }
 
-async function onImageSelected(e: Event) {
+function insertAsBase64(file: File) {
+  const reader = new FileReader()
+  reader.onload = (e) => {
+    const src = e.target?.result as string
+    if (src) editor.value?.chain().focus().setImage({ src }).run()
+  }
+  reader.readAsDataURL(file)
+}
+
+function onImageSelected(e: Event) {
   const file = (e.target as HTMLInputElement).files?.[0]
   if (!file) return
   ;(e.target as HTMLInputElement).value = ''
-
-  ui.showSpinner()
-  try {
-    const form = new FormData()
-    form.append('file', file)
-    const res = await $fetch<{ url: string }>(`${base}/api/upload/image`, {
-      method: 'POST',
-      body: form,
-    })
-    editor.value?.chain().focus().setImage({ src: res.url }).run()
-  } catch {
-    await ui.alert({ icon: 'error', title: '업로드 실패', text: '이미지 업로드 중 오류가 발생했습니다.' })
-  } finally {
-    ui.hideSpinner()
-  }
+  insertAsBase64(file)
 }
 </script>
 

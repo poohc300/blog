@@ -142,10 +142,11 @@
 </template>
 
 <script setup lang="ts">
-definePageMeta({ layout: 'admin', middleware: 'auth' })
+definePageMeta({ layout: 'admin', middleware: 'auth', ssr: false })
 
 const base = useApiBase()
 const ui = useUiStore()
+const { authFetch } = useAuthFetch()
 
 const skillCategories = ['language', 'framework', 'database', 'devops']
 
@@ -220,7 +221,7 @@ function removeProjectTag(projectIndex: number, tagIndex: number) {
 async function save() {
   ui.showSpinner()
   try {
-    await $fetch(`${base}/api/about`, {
+    await authFetch(`${base}/api/about`, {
       method: 'PUT',
       body: {
         ...form,

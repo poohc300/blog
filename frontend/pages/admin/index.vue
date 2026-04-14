@@ -53,10 +53,11 @@
 <script setup lang="ts">
 import { formatDate } from '~/utils/post'
 
-definePageMeta({ layout: 'admin', middleware: 'auth' })
+definePageMeta({ layout: 'admin', middleware: 'auth', ssr: false })
 
 const ui = useUiStore()
 const base = useApiBase()
+const { authFetch } = useAuthFetch()
 
 const { data: raw, refresh } = await useFetch<any[]>(`${base}/api/posts`)
 
@@ -79,7 +80,7 @@ async function handleDelete(id: number, title: string) {
   if (!confirmed) return
   ui.showSpinner()
   try {
-    await $fetch(`${base}/api/posts/${id}`, { method: 'DELETE' })
+    await authFetch(`${base}/api/posts/${id}`, { method: 'DELETE' })
     await refresh()
   } catch {
     await ui.alert({ icon: 'error', title: '오류', text: '삭제 중 오류가 발생했습니다.' })

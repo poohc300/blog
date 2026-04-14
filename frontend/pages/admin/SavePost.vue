@@ -81,10 +81,11 @@
 import { cloneDeep } from 'lodash-es'
 import { onClickOutside } from '@vueuse/core'
 
-definePageMeta({ layout: 'admin', middleware: 'auth' })
+definePageMeta({ layout: 'admin', middleware: 'auth', ssr: false })
 
 const ui = useUiStore()
 const base = useApiBase()
+const { authFetch } = useAuthFetch()
 const route = useRoute()
 
 const postId = Number(route.query.id)
@@ -139,7 +140,7 @@ async function handleSubmit() {
   if (!isDirty.value || ui.loading) return
   ui.showSpinner()
   try {
-    await $fetch(`${base}/api/posts/${postId}`, {
+    await authFetch(`${base}/api/posts/${postId}`, {
       method: 'PUT',
       body: {
         topicId: form.value.topicId,

@@ -93,6 +93,7 @@ const route = useRoute()
 const base = useApiBase()
 const ui = useUiStore()
 const { isLoggedIn } = useAuth()
+const { authFetch } = useAuthFetch()
 const id = route.params.id
 
 const { data: raw } = await useFetch<any>(`${base}/api/posts/${id}`)
@@ -226,7 +227,7 @@ async function handleDelete() {
   if (!confirmed) return
   ui.showSpinner()
   try {
-    await $fetch(`${base}/api/posts/${id}`, { method: 'DELETE' })
+    await authFetch(`${base}/api/posts/${id}`, { method: 'DELETE' })
     await navigateTo('/')
   } catch {
     await ui.alert({ icon: 'error', title: '오류', text: '삭제 중 오류가 발생했습니다.' })

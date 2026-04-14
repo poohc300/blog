@@ -4,14 +4,14 @@ export function useAuthFetch() {
     return token ? { Authorization: `Bearer ${token}` } : {}
   }
 
-  function authFetch<T = any>(url: string, options: Record<string, any> = {}): Promise<T> {
-    return $fetch<T>(url, {
+  function authFetch(url: string, options: Record<string, any> = {}): Promise<any> {
+    return $fetch(url, {
       ...options,
       headers: {
         ...getHeaders(),
         ...(options.headers ?? {}),
       },
-    })
+    }) as Promise<any>
   }
 
   return { authFetch }

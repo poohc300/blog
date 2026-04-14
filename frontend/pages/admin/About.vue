@@ -156,7 +156,7 @@ const form = reactive({
   github:     '',
   email:      '',
   summary:    '',
-  skills:     { language: [] as string[], framework: [] as string[], database: [] as string[], devops: [] as string[] },
+  skills:     { language: [], framework: [], database: [], devops: [] } as Record<string, string[]>,
   experience: [] as any[],
   projects:   [] as any[],
 })

@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.blog.comment.mapper.CommentMapper">
+
+    <select id="findViewsByPostId" resultType="com.example.blog.comment.model.CommentView">
+        WITH RECURSIVE comment_tree AS (
+            SELECT id, parent_comment_id, depth, body, commenter_id, is_deleted, created_at,
+                   ARRAY[id] AS path
+            FROM comment
+            WHERE content_id = #{postId}
+              AND parent_comment_id IS NULL
+
+            UNION ALL
+
+            SELECT c.id, c.parent_comment_id, c.depth, c.body, c.commenter_id, c.is_deleted, c.created_at,
+                   ct.path || c.id
+            FROM comment c
+            JOIN comment_tree ct ON c.parent_comment_id = ct.id
+        )
+        SELECT
+            ct.id,
+            ct.parent_comment_id,
+            ct.depth,
+            CASE WHEN ct.is_deleted THEN NULL ELSE ct.body END  AS body,
+            CASE WHEN ct.is_deleted THEN NULL
+                 WHEN co.type = 'user' THEN u.username
+                 ELSE g.name
+            END                                                  AS author_name,
+            co.type                                              AS author_type,
+            ct.is_deleted                                        AS deleted,
+            ct.created_at
+        FROM comment_tree ct
+        JOIN commenter co ON ct.commenter_id = co.id
+        LEFT JOIN users u ON co.type = 'user' AND u.commenter_id = co.id
+        LEFT JOIN guest g ON co.type = 'guest' AND g.commenter_id = co.id
+        ORDER BY ct.path
+    </select>
+
+    <select id="findForDelete" resultType="com.example.blog.comment.model.CommentForDelete">
+        SELECT
+            c.id,
+            c.commenter_id,
+            co.type            AS commenter_type,
+            g.password_hash    AS guest_password_hash,
+            c.is_deleted       AS deleted
+        FROM comment c
+        JOIN commenter co ON c.commenter_id = co.id
+        LEFT JOIN guest g ON co.type = 'guest' AND g.commenter_id = co.id
+        WHERE c.id = #{commentId}
+    </select>
+
+    <select id="findCommenterIdByUserId" resultType="java.lang.Long">
+        SELECT commenter_id FROM users WHERE id = #{userId}
+    </select>
+
+    <select id="findParentForDepth" resultType="com.example.blog.comment.model.CommentForDelete">
+        SELECT id, depth FROM comment WHERE id = #{parentCommentId}
+    </select>
+
+    <insert id="insertCommenter" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO commenter (type) VALUES (#{type})
+    </insert>
+
+    <insert id="insertGuest">
+        INSERT INTO guest (commenter_id, name, password_hash)
+        VALUES (#{commenterId}, #{name}, #{passwordHash})
+    </insert>
+
+    <insert id="insertComment">
+        INSERT INTO comment (content_id, commenter_id, parent_comment_id, depth, body)
+        VALUES (#{postId}, #{commenterId}, #{req.parentCommentId}, #{depth}, #{req.body})
+    </insert>
+
+    <update id="softDelete">
+        UPDATE comment SET is_deleted = TRUE, deleted_at = NOW() WHERE id = #{commentId}
+    </update>
+
+</mapper>

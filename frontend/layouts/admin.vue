@@ -26,6 +26,13 @@
           >
             새 글 쓰기
           </NuxtLink>
+          <NuxtLink
+            to="/admin/About"
+            class="px-3 py-1.5 text-sm rounded transition-colors"
+            :class="$route.path === '/admin/About' ? 'text-black font-medium' : 'text-gray-500 hover:text-black'"
+          >
+            소개 관리
+          </NuxtLink>
         </nav>
       </div>
     </header>

@@ -132,7 +132,7 @@
 
     <!-- 저장 -->
     <div class="flex justify-end pt-4 border-t border-gray-100">
-      <button @click="save"
+      <button type="button" @click="save"
         class="px-6 py-2 text-sm font-medium bg-black text-white rounded hover:bg-gray-800 transition-colors">
         저장
       </button>
@@ -166,7 +166,7 @@ function parseJson(val: string | null, fallback: any) {
   try { return JSON.parse(val) } catch { return fallback }
 }
 
-const { data: raw } = await useFetch<any>(`${base}/api/about`, { server: false })
+const { data: raw } = await useFetch<any>(`${base}/api/about`)
 
 watch(raw, (val) => {
   if (!val) return

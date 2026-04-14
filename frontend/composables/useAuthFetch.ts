@@ -20,6 +20,7 @@ export function useAuthFetch() {
       if (e?.response?.status === 401 || e?.response?.status === 403) {
         clearUser()
         await navigateTo('/login')
+        return
       }
       throw e
     }

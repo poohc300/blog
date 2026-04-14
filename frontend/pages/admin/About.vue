@@ -147,25 +147,37 @@ definePageMeta({ layout: 'admin', middleware: 'auth' })
 const base = useApiBase()
 const ui = useUiStore()
 
-const { data: raw } = await useFetch<any>(`${base}/api/about`)
-
 const skillCategories = ['language', 'framework', 'database', 'devops']
 
 const form = reactive({
-  name:       raw.value?.name       ?? '',
-  headline:   raw.value?.headline   ?? '',
-  github:     raw.value?.github     ?? '',
-  email:      raw.value?.email      ?? '',
-  summary:    raw.value?.summary    ?? '',
-  skills:     parseJson(raw.value?.skills,     { language: [], framework: [], database: [], devops: [] }),
-  experience: parseJson(raw.value?.experience, []),
-  projects:   parseJson(raw.value?.projects,   []),
+  name:       '',
+  headline:   '',
+  github:     '',
+  email:      '',
+  summary:    '',
+  skills:     { language: [] as string[], framework: [] as string[], database: [] as string[], devops: [] as string[] },
+  experience: [] as any[],
+  projects:   [] as any[],
 })
 
 function parseJson(val: string | null, fallback: any) {
   if (!val) return fallback
   try { return JSON.parse(val) } catch { return fallback }
 }
+
+const { data: raw } = await useFetch<any>(`${base}/api/about`, { server: false })
+
+watch(raw, (val) => {
+  if (!val) return
+  form.name       = val.name       ?? ''
+  form.headline   = val.headline   ?? ''
+  form.github     = val.github     ?? ''
+  form.email      = val.email      ?? ''
+  form.summary    = val.summary    ?? ''
+  form.skills     = parseJson(val.skills,     { language: [], framework: [], database: [], devops: [] })
+  form.experience = parseJson(val.experience, [])
+  form.projects   = parseJson(val.projects,   [])
+}, { immediate: true })
 
 // ── Experience ────────────────────────────────────────────
 function addExperience() {

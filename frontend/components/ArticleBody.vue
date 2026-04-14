@@ -5,7 +5,7 @@
     <div class="mb-6 flex items-center justify-between">
       <span class="text-xs px-2.5 py-1 bg-gray-100 text-gray-600 rounded-full">{{ post.tag }}</span>
 
-      <div v-if="isAuthor(post.authorId)" class="relative" ref="menuRef">
+      <div v-if="isLoggedIn" class="relative" ref="menuRef">
         <button
           class="w-8 h-8 flex items-center justify-center rounded-full text-gray-400 hover:text-black hover:bg-gray-100 transition-colors"
           @click="menuOpen = !menuOpen"
@@ -63,7 +63,7 @@
 <script setup lang="ts">
 import { onClickOutside } from '@vueuse/core'
 
-const { isAuthor } = useAuth()
+const { isLoggedIn } = useAuth()
 
 defineProps<{
   post: {

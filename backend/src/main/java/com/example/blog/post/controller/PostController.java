@@ -2,6 +2,7 @@ package com.example.blog.post.controller;
 
 import com.example.blog.post.model.Post;
 import com.example.blog.post.model.PostCreateRequest;
+import com.example.blog.post.model.PostUpdateRequest;
 import com.example.blog.post.model.Topic;
 import com.example.blog.post.service.PostService;
 import lombok.RequiredArgsConstructor;
@@ -38,6 +39,19 @@ public class PostController {
     @PostMapping("/api/posts")
     public ResponseEntity<Void> create(@RequestBody PostCreateRequest request) {
         postService.create(request);
+        return ResponseEntity.ok().build();
+    }
+
+    @PutMapping("/api/posts/{id}")
+    public ResponseEntity<Void> update(@PathVariable Long id,
+                                       @RequestBody PostUpdateRequest request) {
+        postService.update(id, request);
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/api/posts/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        postService.delete(id);
         return ResponseEntity.ok().build();
     }
 }

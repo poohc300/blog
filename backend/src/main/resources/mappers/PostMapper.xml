@@ -41,4 +41,40 @@
         VALUES (#{topicId}, #{title}, #{body}, #{authorId})
     </insert>
 
+    <update id="update">
+        UPDATE content
+        SET topic_id = #{req.topicId},
+            title    = #{req.title},
+            body     = #{req.body},
+            updated_at = NOW()
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteGuestsByPostId">
+        DELETE FROM guest
+        WHERE commenter_id IN (
+            SELECT commenter_id FROM comment WHERE content_id = #{id}
+        )
+    </delete>
+
+    <delete id="deleteCommentersByPostId">
+        DELETE FROM commenter
+        WHERE type = 'guest'
+          AND id IN (
+            SELECT commenter_id FROM comment WHERE content_id = #{id}
+        )
+    </delete>
+
+    <delete id="deleteCommentsByPostId">
+        DELETE FROM comment WHERE content_id = #{id}
+    </delete>
+
+    <delete id="deleteAttachmentsByPostId">
+        DELETE FROM attachment WHERE content_id = #{id}
+    </delete>
+
+    <delete id="deleteById">
+        DELETE FROM content WHERE id = #{id}
+    </delete>
+
 </mapper>

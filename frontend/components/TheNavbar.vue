@@ -5,7 +5,7 @@
       <nav class="flex items-center gap-4 sm:gap-6 text-sm text-gray-600">
         <NuxtLink to="/" class="hover:text-black transition-colors">글</NuxtLink>
         <a href="#" class="hover:text-black transition-colors hidden sm:block">태그</a>
-        <a href="#" class="hover:text-black transition-colors hidden sm:block">소개</a>
+        <NuxtLink to="/about" class="hover:text-black transition-colors hidden sm:block">소개</NuxtLink>
       </nav>
     </div>
   </header>

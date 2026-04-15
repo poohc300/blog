@@ -14,6 +14,7 @@ public interface PostMapper {
     List<Post> findAll();
     List<Post> search(@Param("q") String q);
     Post findById(Long id);
+    void incrementViewCount(Long id);
     List<Topic> findAllTopics();
     void insert(PostCreateRequest request);
     void update(@Param("id") Long id, @Param("req") PostUpdateRequest request);

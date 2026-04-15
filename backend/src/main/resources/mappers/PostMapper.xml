@@ -41,11 +41,16 @@
             c.title,
             c.body,
             c.created_at,
+            c.view_count,
             t.name AS tag
         FROM content c
         JOIN topic t ON c.topic_id = t.id
         WHERE c.id = #{id}
     </select>
+
+    <update id="incrementViewCount">
+        UPDATE content SET view_count = view_count + 1 WHERE id = #{id}
+    </update>
 
 
     <select id="findAllTopics" resultType="com.example.blog.post.model.Topic">

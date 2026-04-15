@@ -47,7 +47,7 @@
       <div class="w-9 h-9 rounded-full bg-black flex items-center justify-center text-white text-sm font-bold">J</div>
       <div>
         <span class="text-sm font-medium text-black">Jeremy</span>
-        <span class="text-gray-400 text-sm"> · {{ post.date }} · {{ post.readTime }}분 읽기</span>
+        <span class="text-gray-400 text-sm"> · {{ post.date }} · {{ post.readTime }}분 읽기 · 조회 {{ post.viewCount }}</span>
       </div>
     </div>
 
@@ -64,15 +64,18 @@
 import { onClickOutside } from '@vueuse/core'
 
 const { isLoggedIn } = useAuth()
+const base = useApiBase()
 
-defineProps<{
+const props = defineProps<{
   post: {
+    id: number
     authorId: number
     title: string
     body: string
     date: string
     tag: string
     readTime: number
+    viewCount: number
   }
 }>()
 
@@ -83,6 +86,14 @@ const emit = defineEmits<{
 
 const menuOpen = ref(false)
 const menuRef = ref<HTMLElement | null>(null)
+
+onMounted(() => {
+  const key = `viewed:${props.post.id}`
+  if (!sessionStorage.getItem(key)) {
+    sessionStorage.setItem(key, '1')
+    $fetch(`${base}/api/posts/${props.post.id}/view`, { method: 'POST' }).catch(() => {})
+  }
+})
 
 onClickOutside(menuRef, () => { menuOpen.value = false })
 

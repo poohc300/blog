@@ -12,4 +12,5 @@ public class Post {
     private String body;
     private LocalDateTime createdAt;
     private String tag;
+    private int viewCount;
 }

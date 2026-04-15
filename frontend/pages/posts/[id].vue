@@ -113,6 +113,7 @@ const post = computed(() => {
     createdAt: p.createdAt,
     tag: p.tag,
     readTime: calcReadTime(p.body ?? ''),
+    viewCount: p.viewCount ?? 0,
   }
 })
 

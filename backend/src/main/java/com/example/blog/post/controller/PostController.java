@@ -31,6 +31,12 @@ public class PostController {
         return ResponseEntity.ok(post);
     }
 
+    @PostMapping("/api/posts/{id}/view")
+    public ResponseEntity<Void> incrementView(@PathVariable Long id) {
+        postService.incrementViewCount(id);
+        return ResponseEntity.ok().build();
+    }
+
     @GetMapping("/api/topics")
     public ResponseEntity<List<Topic>> getAllTopics() {
         return ResponseEntity.ok(postService.getAllTopics());

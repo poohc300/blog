@@ -27,6 +27,10 @@ public class PostService {
         return postMapper.findById(id);
     }
 
+    public void incrementViewCount(Long id) {
+        postMapper.incrementViewCount(id);
+    }
+
     public List<Topic> getAllTopics() {
         return postMapper.findAllTopics();
     }

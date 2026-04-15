@@ -16,7 +16,10 @@ public class PostService {
 
     private final PostMapper postMapper;
 
-    public List<Post> getAll() {
+    public List<Post> getAll(String q) {
+        if (q != null && !q.isBlank()) {
+            return postMapper.search(q);
+        }
         return postMapper.findAll();
     }
 

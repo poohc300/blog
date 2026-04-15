@@ -18,8 +18,8 @@ public class PostController {
     private final PostService postService;
 
     @GetMapping("/api/posts")
-    public ResponseEntity<List<Post>> getAll() {
-        return ResponseEntity.ok(postService.getAll());
+    public ResponseEntity<List<Post>> getAll(@RequestParam(required = false) String q) {
+        return ResponseEntity.ok(postService.getAll(q));
     }
 
     @GetMapping("/api/posts/{id}")

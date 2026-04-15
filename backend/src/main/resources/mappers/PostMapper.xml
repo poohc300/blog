@@ -18,6 +18,22 @@
         ]]>
     </select>
 
+    <select id="search" resultType="com.example.blog.post.model.Post">
+        <![CDATA[
+        SELECT
+            c.id,
+            c.title,
+            LEFT(regexp_replace(c.body, '<[^>]*>', '', 'g'), 200) AS summary,
+            c.created_at,
+            t.name AS tag
+        FROM content c
+        JOIN topic t ON c.topic_id = t.id
+        WHERE c.title ILIKE '%' || #{q} || '%'
+           OR regexp_replace(c.body, '<[^>]*>', '', 'g') ILIKE '%' || #{q} || '%'
+        ORDER BY c.created_at DESC
+        ]]>
+    </select>
+
     <select id="findById" resultType="com.example.blog.post.model.Post">
         SELECT
             c.id,

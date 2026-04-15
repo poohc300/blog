@@ -12,6 +12,7 @@ import java.util.List;
 @Mapper
 public interface PostMapper {
     List<Post> findAll();
+    List<Post> search(@Param("q") String q);
     Post findById(Long id);
     List<Topic> findAllTopics();
     void insert(PostCreateRequest request);

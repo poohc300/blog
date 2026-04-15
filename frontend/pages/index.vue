@@ -1,12 +1,33 @@
 <template>
   <div class="w-full max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-10 xl:px-16 py-8 sm:py-12">
 
+    <!-- 검색 -->
+    <div class="mb-8 relative">
+      <input
+        v-model="query"
+        type="text"
+        placeholder="검색"
+        class="w-full sm:w-80 border border-gray-200 rounded px-4 py-2 text-sm outline-none focus:border-black transition-colors pr-8"
+      />
+      <button
+        v-if="query"
+        type="button"
+        class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-black transition-colors sm:right-[calc(100%-78px)]"
+        @click="query = ''"
+      >
+        ×
+      </button>
+    </div>
+
     <!-- Post List -->
     <div class="divide-y divide-gray-100">
       <PostCard
         v-for="post in pagedPosts" :key="post.id"
         :post="post"
       />
+      <p v-if="posts.length === 0 && !pending" class="py-16 text-center text-sm text-gray-400">
+        검색 결과가 없습니다.
+      </p>
     </div>
 
     <!-- Pagination -->
@@ -59,7 +80,24 @@ useSeoMeta({
   twitterCard: 'summary',
 })
 
-const { data: raw } = await useFetch<any[]>(`${base}/api/posts`)
+const query = ref('')
+const debouncedQuery = ref('')
+let debounceTimer: ReturnType<typeof setTimeout>
+
+watch(query, (val) => {
+  clearTimeout(debounceTimer)
+  debounceTimer = setTimeout(() => {
+    debouncedQuery.value = val
+    currentPage.value = 1
+  }, 300)
+})
+
+const { data: raw, pending } = await useFetch<any[]>(() =>
+  debouncedQuery.value
+    ? `${base}/api/posts?q=${encodeURIComponent(debouncedQuery.value)}`
+    : `${base}/api/posts`,
+  { watch: [debouncedQuery] }
+)
 
 const posts = computed(() =>
   (raw.value ?? []).map(p => ({

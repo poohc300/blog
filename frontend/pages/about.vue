@@ -6,7 +6,8 @@
       <!-- 프로필 -->
       <div class="flex flex-col sm:flex-row items-center sm:items-start gap-8 mb-12">
         <div class="w-28 h-28 sm:w-32 sm:h-32 rounded-full bg-gray-100 border border-gray-200 flex items-center justify-center flex-shrink-0 overflow-hidden">
-          <span class="text-gray-400 text-sm">사진</span>
+          <img v-if="about.profileImage" :src="about.profileImage" alt="프로필" class="w-full h-full object-cover" />
+          <span v-else class="text-gray-400 text-sm">사진</span>
         </div>
         <div class="text-center sm:text-left">
           <h1 class="text-2xl sm:text-3xl font-bold text-black mb-1">{{ about.name }}</h1>

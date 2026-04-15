@@ -9,7 +9,8 @@ public class About {
     private String github;
     private String email;
     private String summary;
-    private String skills;      // JSONB → String
-    private String experience;  // JSONB → String
-    private String projects;    // JSONB → String
+    private String skills;        // JSONB → String
+    private String experience;    // JSONB → String
+    private String projects;      // JSONB → String
+    private String profileImage;
 }

@@ -2,6 +2,31 @@
   <div class="w-full max-w-2xl mx-auto px-4 sm:px-6 py-10">
     <h2 class="text-lg font-bold text-black mb-8">소개 관리</h2>
 
+    <!-- 프로필 사진 -->
+    <section class="mb-8">
+      <h3 class="text-sm font-semibold text-black mb-4 pb-2 border-b border-gray-100">프로필 사진</h3>
+      <div class="flex items-center gap-5">
+        <div
+          class="w-24 h-24 rounded-full border border-gray-200 overflow-hidden flex items-center justify-center bg-gray-50 flex-shrink-0 cursor-pointer hover:border-black transition-colors"
+          @click="triggerFileInput"
+        >
+          <img v-if="form.profileImage" :src="form.profileImage" alt="프로필" class="w-full h-full object-cover" />
+          <span v-else class="text-xs text-gray-400">사진</span>
+        </div>
+        <div class="space-y-2">
+          <button type="button" @click="triggerFileInput"
+            class="text-xs px-3 py-1.5 border border-gray-200 rounded hover:border-black transition-colors">
+            {{ form.profileImage ? '사진 변경' : '사진 업로드' }}
+          </button>
+          <button v-if="form.profileImage" type="button" @click="form.profileImage = ''"
+            class="block text-xs text-gray-400 hover:text-red-500 transition-colors">
+            삭제
+          </button>
+        </div>
+        <input ref="fileInput" type="file" accept="image/*" class="hidden" @change="uploadImage" />
+      </div>
+    </section>
+
     <!-- 프로필 -->
     <section class="mb-8">
       <h3 class="text-sm font-semibold text-black mb-4 pb-2 border-b border-gray-100">프로필</h3>
@@ -149,16 +174,18 @@ const ui = useUiStore()
 const { authFetch } = useAuthFetch()
 
 const skillCategories = ['language', 'framework', 'database', 'devops']
+const fileInput = ref<HTMLInputElement | null>(null)
 
 const form = reactive({
-  name:       '',
-  headline:   '',
-  github:     '',
-  email:      '',
-  summary:    '',
-  skills:     { language: [], framework: [], database: [], devops: [] } as Record<string, string[]>,
-  experience: [] as any[],
-  projects:   [] as any[],
+  name:         '',
+  headline:     '',
+  github:       '',
+  email:        '',
+  summary:      '',
+  profileImage: '',
+  skills:       { language: [], framework: [], database: [], devops: [] } as Record<string, string[]>,
+  experience:   [] as any[],
+  projects:     [] as any[],
 })
 
 function parseJson(val: string | null, fallback: any) {
@@ -170,15 +197,41 @@ const { data: raw } = await useFetch<any>(`${base}/api/about`)
 
 watch(raw, (val) => {
   if (!val) return
-  form.name       = val.name       ?? ''
-  form.headline   = val.headline   ?? ''
-  form.github     = val.github     ?? ''
-  form.email      = val.email      ?? ''
-  form.summary    = val.summary    ?? ''
-  form.skills     = parseJson(val.skills,     { language: [], framework: [], database: [], devops: [] })
-  form.experience = parseJson(val.experience, [])
-  form.projects   = parseJson(val.projects,   [])
+  form.name         = val.name         ?? ''
+  form.headline     = val.headline     ?? ''
+  form.github       = val.github       ?? ''
+  form.email        = val.email        ?? ''
+  form.summary      = val.summary      ?? ''
+  form.profileImage = val.profileImage ?? ''
+  form.skills       = parseJson(val.skills,     { language: [], framework: [], database: [], devops: [] })
+  form.experience   = parseJson(val.experience, [])
+  form.projects     = parseJson(val.projects,   [])
 }, { immediate: true })
+
+// ── 프로필 이미지 ──────────────────────────────────────────
+function triggerFileInput() {
+  fileInput.value?.click()
+}
+
+async function uploadImage(e: Event) {
+  const file = (e.target as HTMLInputElement).files?.[0]
+  if (!file) return
+  ui.showSpinner()
+  try {
+    const formData = new FormData()
+    formData.append('file', file)
+    const result = await authFetch(`${base}/api/upload/image`, {
+      method: 'POST',
+      body: formData,
+    })
+    form.profileImage = result.url
+  } catch {
+    await ui.alert({ icon: 'error', title: '오류', text: '이미지 업로드 중 오류가 발생했습니다.' })
+  } finally {
+    ui.hideSpinner()
+    if (fileInput.value) fileInput.value.value = ''
+  }
+}
 
 // ── Experience ────────────────────────────────────────────
 function addExperience() {
@@ -228,7 +281,7 @@ async function save() {
         skills:     JSON.stringify(form.skills),
         experience: JSON.stringify(form.experience),
         projects:   JSON.stringify(form.projects),
-      },
+      } as Record<string, any>,
     })
     await ui.alert({ icon: 'success', title: '저장됐습니다.', text: '' })
   } catch {

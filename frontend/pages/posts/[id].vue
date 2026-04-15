@@ -118,6 +118,15 @@ const post = computed(() => {
 })
 
 // ── SEO ────────────────────────────────────────────────────
+function extractFirstImage(html: string): string | undefined {
+  const match = html.match(/<img[^>]+src=["']([^"']+)["']/)
+  return match?.[1]
+}
+
+const ogImage = computed(() =>
+  post.value ? extractFirstImage(post.value.body) : undefined
+)
+
 useSeoMeta({
   title: () => post.value ? `${post.value.title} | Jeremy.dev` : 'Jeremy.dev',
   description: () => post.value?.summary || '',
@@ -125,7 +134,9 @@ useSeoMeta({
   ogDescription: () => post.value?.summary || '',
   ogType: 'article',
   ogUrl: () => `https://blog.nexacromancer.win/posts/${id}`,
-  twitterCard: 'summary',
+  ogImage: () => ogImage.value,
+  twitterCard: () => ogImage.value ? 'summary_large_image' : 'summary',
+  twitterImage: () => ogImage.value,
 })
 
 useHead({
